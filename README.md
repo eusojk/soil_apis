@@ -35,3 +35,7 @@ soil_conn = SoilConnector(path/to/soilproperties)
 soil_dssat = soil_conn.get_soil_property(103.84, 15.76, 500, 3, "dssat")
 print(soil_dssat)
 ```
+
+TODO
+---
+- Output .SOL file as json
