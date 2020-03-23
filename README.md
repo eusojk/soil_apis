@@ -3,16 +3,20 @@ soilapis
 
 Installation:
 ---
--1. create new venv
+-1. create new venv and Install all the dependencies:
 ```
 conda create -n testsoilapis python=3.7
 conda activate testsoilapis
+pip install -r https://raw.githubusercontent.com/eusojk/soil_apis/master/requirements.txt
 ```
--2. Install all the dependencies:
+-2. Fix GDAL's build errors with conda-forge:
 ```
- pip install -r https://raw.githubusercontent.com/eusojk/soil_apis/master/requirements.txt
+ conda install -c conda-forge gdal
 ```
-
+-3. Finally install module:
+```
+ pip install https://github.com/eusojk/soil_apis/blob/master/soilapis.zip?raw=true
+```
 
 Usage:
 ---
