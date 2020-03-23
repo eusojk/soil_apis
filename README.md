@@ -3,8 +3,18 @@ soilapis
 
 Installation:
 ---
+-1. create new venv
+```
+conda create -n testsoilapis python=3.7
+conda activate testsoilapis
+```
+-2. Install all the dependencies:
+```
+ pip install -r https://raw.githubusercontent.com/eusojk/soil_apis/master/requirements.txt
+```
 
-Utilities:
+
+Usage:
 ---
 ```
 from soilapis.calculator import SoilConnector
