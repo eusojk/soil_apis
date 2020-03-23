@@ -1,0 +1,11 @@
+README.md
+setup.py
+soilapis/__init__.py
+soilapis/calculator.py
+soilapis/extract_country_bbox.py
+soilapis/fortran_apis.py
+soilapis/summary_soil_property.py
+soilapis.egg-info/PKG-INFO
+soilapis.egg-info/SOURCES.txt
+soilapis.egg-info/dependency_links.txt
+soilapis.egg-info/top_level.txt

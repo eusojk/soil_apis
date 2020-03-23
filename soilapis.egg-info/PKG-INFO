@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: soilapis
+Version: 0.0.1
+Summary: Package for soil apis
+Home-page: https://github.com/eusojk/gis-scripts
+Author: Josue K
+Author-email: josuk@pm.me
+License: UNKNOWN
+Description: soilapis
+        ========
+        
+        Utilities:
+        - extract the total available water (TAW) value from soil layers
+        - create appropriate dynamic or static soil database (.SOL) as an input for DSSAT 
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
