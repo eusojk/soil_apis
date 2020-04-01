@@ -1,3 +1,4 @@
+scipy
 bleach==3.1.4
 certifi==2019.11.28
 cffi==1.14.0

@@ -66,3 +66,6 @@ class SoilConnector:
 
     def print(self):
         pass
+
+    def get_all_tif_files(self):
+        return ssp.get_soil_layers_dir()

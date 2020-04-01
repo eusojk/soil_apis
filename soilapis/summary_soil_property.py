@@ -134,6 +134,16 @@ class CountrySoilProperty(object):
         return res
 
 
+    def is_ndv_over_thres(self, array, threshold=0.5):
+        """
+        This function checks if the frequency of NoDataValue (255 in this case) is over
+        the given threshold in the array or not
+        :param array: numpy array representing a 2D grid
+        :param threshold: double default is half the size of array
+        :return: bool
+        """
+
+
 def set_soil_layers_dir(soil_layers_path, country_iso):
     global bds_dir, cla_dir, org_dir, san_dir, dir_types
 
