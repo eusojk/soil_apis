@@ -61,7 +61,6 @@ class CountrySoilProperty(object):
         except RuntimeError:  # <- Check first what exception is being thrown
             pass
 
-
     def get_px_coord(self, lon, lat):
         """
         Convert lon-lat into x-y coordinates of pixel
@@ -106,7 +105,8 @@ class CountrySoilProperty(object):
         array = self.slice_by_window(lon, lat, window_size)
         if array is None:
             return -99
-        return round(array.mean(), 2)
+        mean = self.is_ndv_over_thres(array)
+        return mean
 
     def slice_by_window(self, lon, lat, window_size):
         """
@@ -134,7 +134,6 @@ class CountrySoilProperty(object):
             return
         return res
 
-
     def is_ndv_over_thres(self, array, threshold=0.5):
         """
         This function checks if the frequency of NoDataValue (255 in this case) is over
@@ -147,7 +146,7 @@ class CountrySoilProperty(object):
         size_thresh = int(threshold * array.size)
 
         # first transform this array to 1D:
-        array_1d = array.reshape(array.size,)
+        array_1d = array.reshape(array.size, )
 
         # frequency of NDV or # of occurrence
         freq_ndv = sum(array_1d == 255)
@@ -160,7 +159,6 @@ class CountrySoilProperty(object):
             mean = round(array_no_ndv.mean(), 2)
 
         return mean
-
 
 
 def set_soil_layers_dir(soil_layers_path, country_iso):
