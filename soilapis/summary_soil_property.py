@@ -9,6 +9,7 @@ from soilapis.fortran_apis import which_api
 import gdal
 import osr
 import pandas as pd
+import numpy as np
 
 # Paths
 script_dir = os.getcwd()
@@ -137,11 +138,29 @@ class CountrySoilProperty(object):
     def is_ndv_over_thres(self, array, threshold=0.5):
         """
         This function checks if the frequency of NoDataValue (255 in this case) is over
-        the given threshold in the array or not
+        the given threshold in the array or not and return the appropriate mean
         :param array: numpy array representing a 2D grid
         :param threshold: double default is half the size of array
         :return: bool
         """
+        # Actual size of threshold:
+        size_thresh = int(threshold * array.size)
+
+        # first transform this array to 1D:
+        array_1d = array.reshape(array.size,)
+
+        # frequency of NDV or # of occurrence
+        freq_ndv = sum(array_1d == 255)
+
+        if (freq_ndv < size_thresh):
+            mean = round(array.mean(), 2)
+        else:
+            # remove all occurences of NDV
+            array_no_ndv = np.delete(array, np.where(array == 255))
+            mean = round(array_no_ndv.mean(), 2)
+
+        return mean
+
 
 
 def set_soil_layers_dir(soil_layers_path, country_iso):
