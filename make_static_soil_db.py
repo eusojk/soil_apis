@@ -61,17 +61,17 @@ def make_static_soil_db(soil_dir, country='Thailand'):
         new_code = cut_val + digt
         fix_code_num_in_sol(new_code, soil_dssat)
 
-        new_name_i = str(output_dir) + '/' + new_code + '.SOL'
+        new_name_i = str(output_dir) + '/' + new_code + '.SOLD'
 
         copyfile(soil_dssat, new_name_i)
         print('Writing: ', new_name_i)
-        if row_i == 10: break
+        if row_i == 2: break
 
     # Main static file
-    # dot_sol_output = country_iso + '.SOL'
-    # dot_sol_path = merge_all_dot_sol(output_dir, dot_sol_output)
+    dot_sol_output = str(output_dir) + '/' + country_iso + '.SOL'
+    dot_sol_path = merge_all_dot_sol(output_dir, dot_sol_output, num_rows)
 
-    # return dot_sol_path
+    return dot_sol_path
 
 
 def fix_code_num_in_sol(new_code, sol_file):
@@ -86,20 +86,27 @@ def fix_code_num_in_sol(new_code, sol_file):
     # print(hline)
     # print(hline_new)
 
-def merge_all_dot_sol(outputs_dir, dot_sol_output):
+def merge_all_dot_sol(outputs_dir, dot_sol_output, num_cells):
     # get all the dynamic .SOL
-    match = str(outputs_dir) + '/*.SOL'
+    match = str(outputs_dir) + '/*.SOLD'
 
     all_dot_sols = glob.glob(match)
     all_dot_sols.sort()
-    for i in all_dot_sols:
-        print(i)
-    # with open(dot_sol_output, "wb") as outfile:
-    #     for f in all_dot_sols:
-    #         with open(f, "rb") as infile:
-    #             outfile.write(infile.read())
-    #
-    # return Path(outfile)
+
+    # for i in all_dot_sols:
+    #     print(i)
+
+    # if len(all_dot_sols) != num_cells: # something wrong
+    #     print("Stopping: The static database seems not complete")
+    #     return
+
+    with open(dot_sol_output, "wb") as outfile:
+        for f in all_dot_sols:
+            with open(f, "rb") as infile:
+                outfile.write(infile.read())
+                outfile.write('\n'.encode())
+    dot_sol_output = str(outputs_dir) + '/' + dot_sol_output
+    return Path(dot_sol_output)
 
 def is_loc_file_present(country_iso):
     """
@@ -122,14 +129,27 @@ def is_loc_file_present(country_iso):
 
     return loc_file, output_dir if loc_file.exists() else None
 
+def remove_dynamic_dot_sol(dot_sol_dir):
+    match = str(dot_sol_dir) + '/*.SOLD'
+
+    all_dot_sols = glob.glob(match)
+    for fl in all_dot_sols:
+        # print(os.path.isfile(fl), fl)
+        if os.path.isfile(fl):
+            os.remove(fl)
+        else:
+            print("Error - deleting:", fl)
 
 def main():
     path_name = '/home/eusojk/Downloads/layers/soilproperties/'
     # print(make_static_soil_db(path_name))
 
     arg1 = "/home/eusojk/PycharmProjects/soil_apis/outputs"
-    arg2 = 'TTT.SOL'
+    # arg2 = 'TTT.SOL'
     # merge_all_dot_sol(arg1, arg2)
+
+    remove_dynamic_dot_sol(arg1)
+
 
 if __name__ == '__main__':
     main()
