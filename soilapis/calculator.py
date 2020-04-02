@@ -1,11 +1,20 @@
-import glob
+from pathlib import Path
+
 import soilapis.extract_country_bbox as ecb
 import soilapis.summary_soil_property as ssp
-from pathlib import Path
+
+
+def get_all_tif_files():
+    return ssp.get_soil_layers_dir()
 
 
 class SoilConnector:
     def __init__(self, soil_layers_path, country='Thailand'):
+        """
+        Constructor
+        :param soil_layers_path: main directory containing the soil properties (bulk density, organic carbon, clay, sand
+        :param country: the name of the country of interest. This is set to Thailand by default
+        """
         self.layers = soil_layers_path
         self.country_iso = ecb.get_country_iso(country)
         self.test_pass = self.run_tests()
@@ -66,6 +75,3 @@ class SoilConnector:
 
     def print(self):
         pass
-
-    def get_all_tif_files(self):
-        return ssp.get_soil_layers_dir()

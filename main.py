@@ -1,5 +1,5 @@
 from soilapis.calculator import SoilConnector
-import glob
+
 
 def main():
     path_name = '/home/eusojk/Downloads/layers/soilproperties/'
@@ -16,6 +16,7 @@ def main():
     #     fi = glob.glob(fi)
     #     print(len(fi), type(fi))
     # print(len(all_tif), type(all_tif))
+
 
 if __name__ == '__main__':
     main()

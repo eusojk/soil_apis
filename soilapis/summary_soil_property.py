@@ -151,7 +151,7 @@ class CountrySoilProperty(object):
         # frequency of NDV or # of occurrence
         freq_ndv = sum(array_1d == 255)
 
-        if (freq_ndv < size_thresh):
+        if freq_ndv < size_thresh:
             mean = round(array.mean(), 2)
         else:
             # remove all occurences of NDV

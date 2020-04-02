@@ -1,7 +1,7 @@
-import glob
+from pathlib import Path
+
 import soilapis.extract_country_bbox as ecb
 import soilapis.summary_soil_property as ssp
-from pathlib import Path
 
 
 class SoilConnector:

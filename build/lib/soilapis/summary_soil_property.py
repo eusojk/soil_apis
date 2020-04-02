@@ -60,7 +60,6 @@ class CountrySoilProperty(object):
         except RuntimeError:  # <- Check first what exception is being thrown
             pass
 
-
     def get_px_coord(self, lon, lat):
         """
         Convert lon-lat into x-y coordinates of pixel

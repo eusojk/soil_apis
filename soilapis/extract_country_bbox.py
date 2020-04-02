@@ -2,7 +2,6 @@
     This script creates a sub map of a country clipped from globe data file
 """
 import argparse
-import glob
 import os
 import sys
 from pathlib import Path
@@ -10,6 +9,7 @@ from pathlib import Path
 import gdal
 import pycountry
 from country_bounding_boxes import country_subunits_by_iso_code
+
 # from summary_soil_property import get_globe_dir
 from soilapis.summary_soil_property import get_globe_dir
 

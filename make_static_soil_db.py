@@ -8,6 +8,12 @@ from shutil import copyfile, copyfileobj
 
 
 def make_static_soil_db(soil_dir, country='Thailand'):
+    """
+    Main function to create the static SOL
+    :param soil_dir: main directory containing the soil properties (bulk density, organic carbon, clay, sand
+    :param country: the name of the country of interest. This is set to Thailand by default
+    :return: pathname to the final .SOL
+    """
 
     # what is the iso code of this country?
     country_iso = ecb.get_country_iso(country)
@@ -41,7 +47,7 @@ def make_static_soil_db(soil_dir, country='Thailand'):
     num_rows = lon_lat_df.shape[0]
 
     # naming convention: TH_000000*
-    name_conv = country_iso + '_' + (len(str(num_rows)) + 1)*'0'
+    name_conv = country_iso + '_' + (len(str(num_rows)) + 1) * '0'
     len_name_conv = len(name_conv)
 
     # Manufacture each dynamic .SOL for each point
@@ -65,16 +71,26 @@ def make_static_soil_db(soil_dir, country='Thailand'):
 
         copyfile(soil_dssat, new_name_i)
         print('Writing: ', new_name_i)
-        if row_i == 2: break
+        if row_i == 2:
+            break
 
     # Main static file
     dot_sol_output = str(output_dir) + '/' + country_iso + '.SOL'
     dot_sol_path = merge_all_dot_sol(output_dir, dot_sol_output, num_rows)
 
+    # remove dynamic .SOL
+    remove_dynamic_dot_sol(output_dir)
+
     return dot_sol_path
 
 
 def fix_code_num_in_sol(new_code, sol_file):
+    """
+    The dynamic .SOL has a hardcoded codename (e.g. TH_00001). We need to change that
+    :param new_code: new code to substitute
+    :param sol_file: the file to correct
+    :return:
+    """
     from_file = open(sol_file)
     hline = from_file.readline()
 
@@ -86,7 +102,15 @@ def fix_code_num_in_sol(new_code, sol_file):
     # print(hline)
     # print(hline_new)
 
-def merge_all_dot_sol(outputs_dir, dot_sol_output, num_cells):
+
+def merge_all_dot_sol(outputs_dir, dot_sol_output, num_rows):
+    """
+    Merge all .SOL into one
+    :param outputs_dir: directory containing the dynamic .SOL
+    :param dot_sol_output: file to write the content to. This is the static .SOL
+    :param num_rows: number of points. This is to make sure that all dynamic SOL are written
+    :return: pathname to the final .SOL file
+    """
     # get all the dynamic .SOL
     match = str(outputs_dir) + '/*.SOLD'
 
@@ -107,6 +131,7 @@ def merge_all_dot_sol(outputs_dir, dot_sol_output, num_cells):
                 outfile.write('\n'.encode())
     dot_sol_output = str(outputs_dir) + '/' + dot_sol_output
     return Path(dot_sol_output)
+
 
 def is_loc_file_present(country_iso):
     """
@@ -129,7 +154,13 @@ def is_loc_file_present(country_iso):
 
     return loc_file, output_dir if loc_file.exists() else None
 
+
 def remove_dynamic_dot_sol(dot_sol_dir):
+    """
+    Remove dynamic .SOL's
+    :param dot_sol_dir: directory containing the dynamic .SOL
+    :return: None
+    """
     match = str(dot_sol_dir) + '/*.SOLD'
 
     all_dot_sols = glob.glob(match)
@@ -140,15 +171,16 @@ def remove_dynamic_dot_sol(dot_sol_dir):
         else:
             print("Error - deleting:", fl)
 
+
 def main():
     path_name = '/home/eusojk/Downloads/layers/soilproperties/'
-    # print(make_static_soil_db(path_name))
+    print(make_static_soil_db(path_name))
 
     arg1 = "/home/eusojk/PycharmProjects/soil_apis/outputs"
     # arg2 = 'TTT.SOL'
     # merge_all_dot_sol(arg1, arg2)
 
-    remove_dynamic_dot_sol(arg1)
+    # remove_dynamic_dot_sol(arg1)
 
 
 if __name__ == '__main__':
