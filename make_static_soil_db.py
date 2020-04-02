@@ -1,5 +1,5 @@
 import os
-import sys
+import glob
 import pandas as pd
 import soilapis.extract_country_bbox as ecb
 from pathlib import Path
@@ -40,12 +40,13 @@ def make_static_soil_db(soil_dir, country='Thailand'):
     # how many rows do we need to loop through
     num_rows = lon_lat_df.shape[0]
 
-    # naming convention: TH_000001
-    # name_conv = str(output_dir) + '/' + country_iso + '_' + len(str(num_rows))*'0'
+    # naming convention: TH_000000*
     name_conv = country_iso + '_' + (len(str(num_rows)) + 1)*'0'
+    len_name_conv = len(name_conv)
 
+    # Manufacture each dynamic .SOL for each point
     for row_i in range(num_rows):
-        # new_name_i = name_conv + str(row_i + 1) + '.SOL'
+        # get them lon, lat
         lon = lon_df.iloc[row_i]
         lat = lat_df.iloc[row_i]
 
@@ -53,18 +54,24 @@ def make_static_soil_db(soil_dir, country='Thailand'):
         soil_dssat = soil_conn.get_soil_property(lon, lat, depth_arg, win_size, format_arg)
 
         # fix the code in TH.SOL:
-        new_code = name_conv + str(row_i + 1)
+        digt = str(row_i + 1)
+        len_i = len(digt)
+        cut_at = len_name_conv - len_i
+        cut_val = name_conv[:cut_at]
+        new_code = cut_val + digt
         fix_code_num_in_sol(new_code, soil_dssat)
 
         new_name_i = str(output_dir) + '/' + new_code + '.SOL'
 
         copyfile(soil_dssat, new_name_i)
+        print('Writing: ', new_name_i)
+        if row_i == 10: break
 
-        if row_i == 1:
-            break
+    # Main static file
+    # dot_sol_output = country_iso + '.SOL'
+    # dot_sol_path = merge_all_dot_sol(output_dir, dot_sol_output)
 
-
-    return soil_dssat
+    # return dot_sol_path
 
 
 def fix_code_num_in_sol(new_code, sol_file):
@@ -79,6 +86,20 @@ def fix_code_num_in_sol(new_code, sol_file):
     # print(hline)
     # print(hline_new)
 
+def merge_all_dot_sol(outputs_dir, dot_sol_output):
+    # get all the dynamic .SOL
+    match = str(outputs_dir) + '/*.SOL'
+
+    all_dot_sols = glob.glob(match)
+    all_dot_sols.sort()
+    for i in all_dot_sols:
+        print(i)
+    # with open(dot_sol_output, "wb") as outfile:
+    #     for f in all_dot_sols:
+    #         with open(f, "rb") as infile:
+    #             outfile.write(infile.read())
+    #
+    # return Path(outfile)
 
 def is_loc_file_present(country_iso):
     """
@@ -104,9 +125,11 @@ def is_loc_file_present(country_iso):
 
 def main():
     path_name = '/home/eusojk/Downloads/layers/soilproperties/'
-    ddf = make_static_soil_db(path_name)
+    # print(make_static_soil_db(path_name))
 
-    print(ddf)
+    arg1 = "/home/eusojk/PycharmProjects/soil_apis/outputs"
+    arg2 = 'TTT.SOL'
+    # merge_all_dot_sol(arg1, arg2)
 
 if __name__ == '__main__':
     main()
