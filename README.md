@@ -104,7 +104,7 @@ Some References:
 > * _TAW_: this is a float value corresponding to the TAW calculated by the script. This value is in mm
 > 
 
-**Bounding Box Coordinates: **
+**Bounding Box Coordinates:**
 
 You can also find the bounding box coordinates for any other country [here](https://boundingbox.klokantech.com/).
 
