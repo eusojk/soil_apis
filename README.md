@@ -95,11 +95,26 @@ python summary_soil_property.py --lon=103.84 --lat=15.76 --win=3 --depth=500 --f
 
 Some References:
 ---
+**Info on Total Available Water file:**
 
-The _SoilTAW[Depth]mm.csv_ output file contains three entries needed for Soil Water Balance:
-* _codeID_: this is just a unique ID for the TAW value. It's an integer
-* _Soil type_: This is used by the water balance model to link a computational unit with the data. Possible values are: SiltLoam, SAND, SiltClayL, Loam, ClayLoam, SandyLoam, etc...
-* _TAW_: this is a float value corresponding to the TAW calculated by the script. This value is in mm
+>
+> The _SoilTAW[Depth]mm.csv_ output file contains three entries needed for Soil Water Balance:
+> * _codeID_: this is a unique ID for the TAW value. It's an integer
+> * _Soil type_: This is used by the water balance model to link a computational unit with the data. Possible values are: SiltLoam, SAND, SiltClayL, Loam, ClayLoam, SandyLoam, etc...
+> * _TAW_: this is a float value corresponding to the TAW calculated by the script. This value is in mm
+> 
+
+**Bounding Box Coordinates: **
+
+You can also find the bounding box coordinates for any other country [here](https://boundingbox.klokantech.com/).
+
+Here are some examples:
+
+> - _Cambodia_: 102.33382817, 9.4752639, 107.6276788, 14.69042236
+> - _Laos_:     100.08432468, 13.90967515, 107.63499888, 22.50867163
+> - _Myanmar_:  92.17194228, 9.43994314, 101.17007954, 28.54783496
+> - _Thailand_: 97.34380713, 5.61285098, 105.63681192, 20.46483364
+> - _Vietnam_:  102.14440999, 7.89114807, 117.86905262, 23.39339492
 
 
 TODO
