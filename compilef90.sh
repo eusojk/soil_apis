@@ -4,6 +4,8 @@ if ! [ -x "$(command -v gfortran)" ]; then
   exit 1
 fi
 
+echo "Started compiling..."
+
 rootdir=$PWD
 soilapidir="$rootdir/soilapis"
 dotsolexec="$soilapidir/dotSolAPI2.a"
