@@ -8,17 +8,6 @@ This module requires Gfortran and should be run on a UNIX based OS.
 
 This module also depends on GTiff files. You can find some sample files for Thailand [here](https://www.dropbox.com/s/74hpv9d56a8s461/layers.zip?dl=0).
 
-1. Clone this project:
-```
-git clone https://github.com/eusojk/soil_apis/
-```
-2. Run the executable to compile the required fortran scripts:
-```
-cd soil_apis/
-chmod +x compilef90.sh 
-./compilef90.sh 
-```
-
 
 
 Dependencies:
@@ -36,6 +25,17 @@ pip install -r https://raw.githubusercontent.com/eusojk/soil_apis/master/require
 -3. Finally install module:
 ```
  pip install https://github.com/eusojk/soil_apis/blob/master/soilapis.zip?raw=true
+```
+-4. Clone this project:
+```
+git clone https://github.com/eusojk/soil_apis/
+```
+
+-5. Run the executable to compile the required fortran scripts:
+```
+cd soil_apis/
+chmod +x compilef90.sh 
+./compilef90.sh 
 ```
 
 Usage - As a Python Module:
