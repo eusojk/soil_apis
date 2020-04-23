@@ -8,6 +8,7 @@ from pathlib import Path
 from soilapis.calculator import SoilConnector
 from shutil import copyfile, copyfileobj
 
+dirname = ''
 
 def make_static_soil_db(soil_dir, country='Thailand'):
     """
@@ -27,6 +28,9 @@ def make_static_soil_db(soil_dir, country='Thailand'):
     # check if this country is suitable for the script:
     if is_loc_file_present(country_iso) is None:
         print("{} is not currently supported :(".format(country))
+        return
+    else:
+        print("UOUOIUOJUOI!")
         return
 
     lon_lat_fn = is_loc_file_present(country_iso)[0]
@@ -145,16 +149,21 @@ def is_loc_file_present(country_iso):
     :param country_iso: a 3 string value: representing the iso code of a country. e.g; tha for Thailand
     :return: pathname a tuple if file exists, None otherwise
     """
+    global dirname
 
     country_iso = country_iso.lower()
-    script_dir = os.getcwd()
-    script_dir = os.path.abspath(os.path.dirname(script_dir))
+    script_dir = dirname #os.getcwd()
+    # script_dir = os.path.abspath(os.path.dirname(script_dir))
 
     output_dir = script_dir + '/outputs/'
     output_dir = Path(output_dir)
 
     locs_dir = script_dir + '/locs/'
     loc_file = locs_dir + country_iso + '_lon_lat_centers.csv'
+
+    # print('script_dir:',script_dir)
+    # print('loc_file:',loc_file)
+    # print('dirname:',dirname)
 
     # loc_file = Path(loc_file)
     if os.path.exists(loc_file):
@@ -181,7 +190,10 @@ def remove_dynamic_dot_sol(dot_sol_dir):
 
 
 def is_soil_layers_present(script_path):
+    global dirname
+
     script_dir = os.path.abspath(os.path.dirname(script_path))
+    dirname = script_dir
     layers_dir = script_dir + '/soilproperties/'
 
     if not Path(layers_dir).exists():
