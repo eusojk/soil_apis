@@ -42,7 +42,7 @@ class SoilConnector:
         :param lat: lat
         :param depth: depth of layer
         :param win: window size of grid
-        :param format_arg: dssat (a .SOL file) or dssat_json (a json type output)
+        :param format_arg: dssat (a .SOL file) or dssat_json (a json type output) or error codes: -99 or -89 (sea values)
         :return:
         """
         if self.test_pass:

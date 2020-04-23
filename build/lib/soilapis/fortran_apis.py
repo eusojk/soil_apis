@@ -27,6 +27,14 @@ def dot_sol_api(script_dir):
     # arg_sample = Path(sample_path)
 
     # check if both the exec and sample argument input exists
+    # print("debugging fortran_api")
+    # print('path_to_exec: ', path_to_exec)
+    # print('arg_sample: ', arg_sample)
+
+    path_to_exec = path_to_exec.split("/")
+    path_to_exec = remove_duplicates(path_to_exec)
+    path_to_exec = '/'.join(path_to_exec)
+
     if Path(path_to_exec).exists() and Path(arg_sample).exists():
         os.chdir(output_dir)
         args_run = [path_to_exec, arg_sample]
@@ -80,15 +88,29 @@ def which_api(sample_path, script_dir, api_num, fracs=None):
     if api_num == 0:  # TAW
 
         path_to_exec += '/make_texture.a'
-        path_to_exec = Path(path_to_exec)
+        path_to_exec = path_to_exec  # Path(path_to_exec)
         outfile = soil_type_api(fracs)
 
     elif api_num == 1:  # SOL
         path_to_exec += '/dotSolAPI2.a'
-        path_to_exec = Path(path_to_exec)
+        path_to_exec = path_to_exec  # Path(path_to_exec)
         outfile = dot_sol_api(script_dir)
 
     return outfile
+
+
+def remove_duplicates(list_of_elements):
+    # Create an empty list to store unique elements
+    unique_list = []
+
+    # Iterate over the original list and for each element
+    # add it to unique_list, if its not already there.
+    for elem in list_of_elements:
+        if elem not in unique_list:
+            unique_list.append(elem)
+
+    # Return the list of unique elements
+    return unique_list
 
 
 def main():

@@ -9,6 +9,7 @@ from soilapis.fortran_apis import which_api
 import gdal
 import osr
 import pandas as pd
+import numpy as np
 
 # Paths
 script_dir = os.getcwd()
@@ -98,13 +99,14 @@ class CountrySoilProperty(object):
         :param window_size: int - height and width of window. e.g. 3 means 3 by 3. Must be odd
         :return: float value, the average or mean of the array or -99 if invalid
         """
-        if self.get_band_value(lon, lat) == 255:  # disregard any value from the sea
-            return - 99
+        # if self.get_band_value(lon, lat) == 255:  # disregard any value from the sea
+        #     return - 99
 
         array = self.slice_by_window(lon, lat, window_size)
         if array is None:
             return -99
-        return round(array.mean(), 2)
+        mean = self.is_ndv_over_thres(array)
+        return mean
 
     def slice_by_window(self, lon, lat, window_size):
         """
@@ -128,9 +130,40 @@ class CountrySoilProperty(object):
         col_stop = px_y + step + 1
         data = self.get_band_array()
         res = data[row_start:row_stop, col_start:col_stop]
-        if res.shape[0] * res.shape[1] != window_size * window_size:
-            return
+        # if res.shape[0] * res.shape[1] != window_size * window_size:
+        #     return
         return res
+
+    def is_ndv_over_thres(self, array, threshold=0.5):
+        """
+        This function checks if the frequency of NoDataValue (255 in this case) is over
+        the given threshold in the array or not and return the appropriate mean
+        :param array: numpy array representing a 2D grid
+        :param threshold: double default is half the size of array
+        :return: bool
+        """
+        # Actual size of threshold:
+        size_thresh = int(threshold * array.size)
+
+        # first transform this array to 1D:
+        array_1d = array.reshape(array.size, )
+
+        # frequency of NDV or # of occurrence
+        freq_ndv = sum(array_1d == 255)
+
+        # if freq_ndv < size_thresh:
+        #     mean = round(array.mean(), 2)
+        # else:
+        #     # remove all occurences of NDV
+        #     array_no_ndv = np.delete(array, np.where(array == 255))
+        #     mean = round(array_no_ndv.mean(), 2)
+
+        array_no_ndv = np.delete(array_1d, np.where(array_1d == 255))
+        if array_no_ndv.size == 0:
+            return -89
+        else:
+            mean = round(array_no_ndv.mean(), 2)
+            return mean
 
 
 def set_soil_layers_dir(soil_layers_path, country_iso):
@@ -218,6 +251,8 @@ def average_per_layer(dir_path, lon, lat, window_size):
         avg = co.average_by_window(lon, lat, window_size)
         if avg == -99:
             return -99
+        elif avg == -89:
+            return -89
         list_avg.append(avg)
 
     return list_avg
@@ -239,6 +274,8 @@ def average_per_type(dir_path, lon, lat, window_size):
 
         if list_avg == -99:
             return -99
+        elif list_avg == -89:
+            return -89
 
         if key not in dict_avg:
             dict_avg[key] = list_avg
@@ -289,7 +326,7 @@ def compute_pwp(clay_val, oc_val, sand_val):
 
     # Step #1 - convert OC to OM
     om_val = 2 * oc_val
-    om_val /= 1000
+    om_val /= 2 #1000
     clay_val /= 100
     sand_val /= 100
 
@@ -327,7 +364,7 @@ def compute_field_capacity(clay_val, oc_val, sand_val):
 
     # Step #1 - convert OC to OM
     om_val = 2 * oc_val
-    om_val /= 1000
+    om_val /= 2 #1000
     clay_val /= 100
     sand_val /= 100
 
@@ -376,7 +413,7 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
     :param depth: depth of soil in mm
     :param format_arg: str - indicates type of output to produce. if 'swb', output is TAW file; if 'dssat', output is .SOL file
     :return: a text file or -99
-    :param json_out: if True, return a dict, otherwise a text file
+    :param json_out: if True, return a dict, otherwise a text file. Errors returned could be : -99 or -89 (NDV)
     """
     global outputs, dir_types, script_dir
     out_dssat = script_dir
@@ -391,6 +428,10 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
     dict_summary = average_per_type(dir_types, lon, lat, window)
     if dict_summary == -99:
         return -99
+
+    if dict_summary == -89: # sea values
+        print('Error code -89: Sea values spotted')
+        return -89
 
     # outname = outputs
     # outname = 'taw-' + str(lon) + '-' + str(lat) + '-' + str(depth) + 'mm.csv'

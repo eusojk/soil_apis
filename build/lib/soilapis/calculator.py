@@ -4,8 +4,17 @@ import soilapis.extract_country_bbox as ecb
 import soilapis.summary_soil_property as ssp
 
 
+def get_all_tif_files():
+    return ssp.get_soil_layers_dir()
+
+
 class SoilConnector:
     def __init__(self, soil_layers_path, country='Thailand'):
+        """
+        Constructor
+        :param soil_layers_path: main directory containing the soil properties (bulk density, organic carbon, clay, sand
+        :param country: the name of the country of interest. This is set to Thailand by default
+        """
         self.layers = soil_layers_path
         self.country_iso = ecb.get_country_iso(country)
         self.test_pass = self.run_tests()
@@ -33,7 +42,7 @@ class SoilConnector:
         :param lat: lat
         :param depth: depth of layer
         :param win: window size of grid
-        :param format_arg: dssat (a .SOL file) or dssat_json (a json type output)
+        :param format_arg: dssat (a .SOL file) or dssat_json (a json type output) or error codes: -99 or -89 (sea values)
         :return:
         """
         if self.test_pass:

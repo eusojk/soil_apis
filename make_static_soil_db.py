@@ -1,5 +1,7 @@
 import os
 import glob
+import argparse
+import sys
 import pandas as pd
 import soilapis.extract_country_bbox as ecb
 from pathlib import Path
@@ -42,7 +44,7 @@ def make_static_soil_db(soil_dir, country='Thailand'):
     depth_arg = 600
     win_size = 20
     format_arg = "dssat"
-
+    error_codes = [-89, -99]
     # how many rows do we need to loop through
     num_rows = lon_lat_df.shape[0]
 
@@ -59,6 +61,10 @@ def make_static_soil_db(soil_dir, country='Thailand'):
         # create the dynamic .SOL for this point
         soil_dssat = soil_conn.get_soil_property(lon, lat, depth_arg, win_size, format_arg)
 
+        # Watch out for sea values:
+        if soil_dssat in error_codes:
+            continue
+
         # fix the code in TH.SOL:
         digt = str(row_i + 1)
         len_i = len(digt)
@@ -71,8 +77,8 @@ def make_static_soil_db(soil_dir, country='Thailand'):
 
         copyfile(soil_dssat, new_name_i)
         print('Writing: ', new_name_i)
-        if row_i == 2:
-            break
+        # if row_i == 2:
+        #     break
 
     # Main static file
     dot_sol_output = str(output_dir) + '/' + country_iso + '.SOL'
@@ -150,9 +156,11 @@ def is_loc_file_present(country_iso):
     locs_dir = script_dir + '/locs/'
     loc_file = locs_dir + country_iso + '_lon_lat_centers.csv'
 
-    loc_file = Path(loc_file)
-
-    return loc_file, output_dir if loc_file.exists() else None
+    # loc_file = Path(loc_file)
+    if os.path.exists(loc_file):
+        return loc_file, output_dir
+    else:
+        return
 
 
 def remove_dynamic_dot_sol(dot_sol_dir):
@@ -172,15 +180,41 @@ def remove_dynamic_dot_sol(dot_sol_dir):
             print("Error - deleting:", fl)
 
 
+def is_soil_layers_present(script_path):
+    script_dir = os.path.abspath(os.path.dirname(script_path))
+    layers_dir = script_dir + '/soilproperties/'
+
+    if not Path(layers_dir).exists():
+        return
+    # print("layers_dir", Path(layers_dir).exists(), layers_dir)
+    return layers_dir
+
+
 def main():
     path_name = '/home/eusojk/Downloads/layers/soilproperties/'
-    print(make_static_soil_db(path_name))
+    # print(make_static_soil_db(path_name))
 
     arg1 = "/home/eusojk/PycharmProjects/soil_apis/outputs"
     # arg2 = 'TTT.SOL'
     # merge_all_dot_sol(arg1, arg2)
 
     # remove_dynamic_dot_sol(arg1)
+    script_path = sys.argv[0]
+    soil_dir = is_soil_layers_present(script_path)
+
+    if soil_dir is None:
+        print(
+            "\n The 'soilproperties' directory is missing. Please download the zip file and place it in your project directory.")
+        return
+
+    parser = argparse.ArgumentParser(
+        description="This script creates a static soil database .SOL"
+    )
+    parser.add_argument("--country", type=str, required=True, help="country, e.g. Thailand")
+    country_arg = vars(parser.parse_args())['country']
+    # print(country_arg, soil_dir)
+
+    make_static_soil_db(soil_dir, country_arg)
 
 
 if __name__ == '__main__':

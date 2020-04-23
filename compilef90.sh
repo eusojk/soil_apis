@@ -4,11 +4,6 @@ if ! [ -x "$(command -v gfortran)" ]; then
   exit 1
 fi
 
-if ! [ -x "$(command -v make)" ]; then
-  echo 'Error: gfortran is not installed. Please install before you proceed' >&2
-  exit 1
-fi
-
 echo "Started compiling..."
 
 rootdir=$PWD
