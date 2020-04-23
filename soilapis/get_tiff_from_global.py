@@ -119,7 +119,7 @@ def main():
         description="This script extracts a national layer from global Geotiff files featuring clay, sand, organic CO "
                     "and bulk density ")
     parser.add_argument("-c", type=str, required=True, help="name of a country, e.g. Thailand")
-    parser.add_argument("-g", type=str, required=True, help="path to geotif file, e.g. /downloads/clay.tiff")
+    parser.add_argument("-g", type=str, required=True, help="path to global geotif file, e.g. /downloads/clay.tiff")
 
     args = vars(parser.parse_args())
 
@@ -142,7 +142,7 @@ def main():
     set_country_bbox(get_country_bbox())
 
     clipped_tif = clip_by_bbox(name_global_tiff, country_bbox)
-    
+
     if clipped_tif is not None:
         print('Extraction terminated. Output:', clipped_tif)
 
