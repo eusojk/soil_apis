@@ -76,9 +76,6 @@ The countries currently supported are:
         ![Run make_static_db 2](images/run_script_france_vs.PNG)
         *
 
-    3.c If Running in the terminal, you may get some Backtrace warnings from Fortran. 
-    These seem to be 'EOF' errors but won't impact the success of the script :) 
-    * 
 4. How do I run *make_static_soil_db.py* for the other countries (e.g. KHM, LAO, etc.)? 
     
     Remember the *soilproperties* directory from above? Model the structure of the folder and create/add the individual GTiff directory for additional countries.
@@ -170,5 +167,4 @@ The _SoilTAW[Depth]mm.csv_ output file contains three entries needed for Soil Wa
 
 TODO
 ---
-- Fix Fortran EOF warnings when script run in terminal
 - Output .SOL file as json
