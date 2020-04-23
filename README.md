@@ -67,7 +67,7 @@ The countries currently supported are:
 **P.S. Running the script above would take some time!**
 
 3. Examples of some simulations run in visual code:
-    *
+    
     3.a. After successful iterations of .SOLD, you will get a **.SOL** at the end
         ![Run make_static_db 1](images/run_script_vs1.png)
         *
