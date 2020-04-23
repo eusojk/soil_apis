@@ -1,45 +1,110 @@
-soilapis
+soilapis: Creating .SOL database (DSSAT) and TAW files (SWB)
 ========
 
 
 Requirements:
 ---
 This module requires Gfortran and should be run on a UNIX based OS.
-
-This module also depends on GTiff files. You can find some sample files for Thailand [here](https://www.dropbox.com/s/74hpv9d56a8s461/layers.zip?dl=0).
-
-1. Clone this project:
+If you are on Ubuntu, you can install some utilities like this:
 ```
-git clone https://github.com/eusojk/soil_apis/
-```
-2. Run the executable to compile the required fortran scripts:
-```
-cd soil_apis/
-chmod +x compilef90.sh 
-./compilef90.sh 
+    sudo apt-get install build-essential gfortran wget
 ```
 
 
 
 Dependencies:
 ---
--1. create new venv and Install all the dependencies:
+1. Create new venv and Install all the dependencies:
 ```
-conda create -n testsoilapis python=3.7
-conda activate testsoilapis
-pip install -r https://raw.githubusercontent.com/eusojk/soil_apis/master/requirements.txt
+    conda create -n testsoilapis python=3.7
+    conda activate testsoilapis
+    pip install -r https://raw.githubusercontent.com/eusojk/soil_apis/master/requirements.txt
 ```
--2. Fix GDAL's build errors with conda-forge:
+2. Fix GDAL's build errors with conda-forge:
 ```
- conda install -c conda-forge gdal
+    conda install -c conda-forge gdal
 ```
--3. Finally install module:
+3. Finally install module:
 ```
- pip install https://github.com/eusojk/soil_apis/blob/master/soilapis.zip?raw=true
+    pip install https://github.com/eusojk/soil_apis/blob/master/soilapis.zip?raw=true
 ```
+4. Clone this project:
+```
+    git clone https://github.com/eusojk/soil_apis/
+```
+5. Run the executable to compile the required fortran scripts:
+```
+    bash compilef90.sh 
+```
+6. Still in your *soil_apis* directory, download the soilproperties file and unzip it:
+```
+    wget https://www.dropbox.com/s/41acfpzh782a2kh/soilproperties.zip
+    unzip soilproperties.zip
+```
+7. The hierarchy of the *soilproperties* directory should like this:
 
-Usage - As a Python Module:
+![Tree directory of soilproperties](images/tree_soilp.png)
+
+
 ---
+A. How to create a static .SOL file (DSSAT)?
+===
+
+The countries currently supported are: 
+* Cambodia (KHM)
+* Laos (LAO)
+* Myanmar (MNM)
+* Thailand (THA)
+* Vietnam (VNM)
+
+**Make sure your virtual python environment is installed and activated before proceeding**
+
+1. Go to the project directory if not there already
+2. Run the script by providing the name of country of interest:
+```
+    python make_static_soil_db.py --country Thailand
+```
+**P.S. Running the script above would take some time!**
+
+3. Examples of some simulations run in visual code:
+    *
+    3.a. After successful iterations of .SOLD, you will get a **.SOL** at the end
+        ![Run make_static_db 1](images/run_script_vs1.png)
+        *
+
+    3.b. Some countries are not natively supported:
+        ![Run make_static_db 2](images/run_script_france_vs.png)
+        *
+
+    3.c If Running in the terminal, you may get some Backtrace warnings from Fortran. 
+    These seem to be 'EOF' errors but won't impact the success of the script :) 
+    * 
+4. How do I run *make_static_soil_db.py* for the other countries (e.g. KHM, LAO, etc.)? \
+    *
+    Remember the *soilproperties* directory from above? Model the structure of the folder and create/add the individual GTiff directory for additional countries.
+    *
+    4.1. Prepare your layer: extracting from a global GTiff file:
+    ![Run extract script](images/extract_code.png)
+
+    For example, to extract GTiff for Cambodia from the global organic GTiff life:
+    ```
+        python soilapis/get_tiff_from_global.py -c Cambodia -g ../organic_60cm.tif
+    ```
+    The output will be:
+    >
+    > _extraction terminated. Output: /pathto/soil_apis/KHM_organic_60cm.tif_
+    >
+
+
+    4.2. After preparing all your layers using the script above. Copy them to the *soilproperties* directory like we did for **"THA"**. 
+
+
+---
+B. How to create a dynamic .SOL file (SWB)?
+===
+
+### B.1. Usage - As a Python Module:
+<!-- --- -->
 
 **Make sure your virtual python environment is installed and activated before proceeding**
 
@@ -60,8 +125,8 @@ print(soil_dssat)
 ```
 
 
-Usage - As a CLI:
----
+### B.2. Usage - As a CLI:
+<!-- --- -->
 
 **Make sure your virtual python environment is installed and activated before proceeding**
 
@@ -104,4 +169,5 @@ The _SoilTAW[Depth]mm.csv_ output file contains three entries needed for Soil Wa
 
 TODO
 ---
+- Fix Fortran EOF warnings when script run in terminal
 - Output .SOL file as json
