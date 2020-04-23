@@ -43,7 +43,7 @@ Dependencies:
 ```
 7. The hierarchy of the *soilproperties* directory should like this:
 
-![Tree directory of soilproperties](images/tree_soilp.png)
+![Tree directory of soilproperties](images/tree_soilp.PNG)
 
 
 ---
@@ -73,7 +73,7 @@ The countries currently supported are:
         *
 
     3.b. Some countries are not natively supported:
-        ![Run make_static_db 2](images/run_script_france_vs.png)
+        ![Run make_static_db 2](images/run_script_france_vs.PNG)
         *
 
     3.c If Running in the terminal, you may get some Backtrace warnings from Fortran. 
@@ -84,7 +84,7 @@ The countries currently supported are:
     Remember the *soilproperties* directory from above? Model the structure of the folder and create/add the individual GTiff directory for additional countries.
     *
     4.1. Prepare your layer: extracting from a global GTiff file:
-    ![Run extract script](images/extract_code.png)
+    ![Run extract script](images/extract_code.PNG)
 
     For example, to extract GTiff for Cambodia from the global organic GTiff life:
     ```
