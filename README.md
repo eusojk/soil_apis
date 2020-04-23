@@ -80,9 +80,10 @@ The countries currently supported are:
     These seem to be 'EOF' errors but won't impact the success of the script :) 
     * 
 4. How do I run *make_static_soil_db.py* for the other countries (e.g. KHM, LAO, etc.)? \
-    *
+    
     Remember the *soilproperties* directory from above? Model the structure of the folder and create/add the individual GTiff directory for additional countries.
-    *
+    
+
     4.1. Prepare your layer: extracting from a global GTiff file:
     ![Run extract script](images/extract_code.PNG)
 
