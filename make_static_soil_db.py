@@ -230,4 +230,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print()
+        print('Script Interrupted. No static SOL produced :( ')
+        try:
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
