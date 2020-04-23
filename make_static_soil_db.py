@@ -29,9 +29,9 @@ def make_static_soil_db(soil_dir, country='Thailand'):
     if is_loc_file_present(country_iso) is None:
         print("{} is not currently supported :(".format(country))
         return
-    else:
-        print("UOUOIUOJUOI!")
-        return
+    # else:
+    #     print("Yay!")
+    #     return
 
     lon_lat_fn = is_loc_file_present(country_iso)[0]
     lon_lat_df = pd.read_csv(lon_lat_fn)
