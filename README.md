@@ -79,7 +79,7 @@ The countries currently supported are:
     3.c If Running in the terminal, you may get some Backtrace warnings from Fortran. 
     These seem to be 'EOF' errors but won't impact the success of the script :) 
     * 
-4. How do I run *make_static_soil_db.py* for the other countries (e.g. KHM, LAO, etc.)? \
+4. How do I run *make_static_soil_db.py* for the other countries (e.g. KHM, LAO, etc.)? 
     
     Remember the *soilproperties* directory from above? Model the structure of the folder and create/add the individual GTiff directory for additional countries.
     
