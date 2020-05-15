@@ -2,8 +2,8 @@ from soilapis.calculator import SoilConnector
 
 
 def main():
-    path_name = '/home/eusojk/Downloads/layers/soilproperties/'
-
+    path_name = '/home/eusojk/downloads/soil_apis/soilproperties/'
+    ouput_path = "/home/eusojk/downloads/"
     soil_conn = SoilConnector(path_name)
     lon = 103.98
     lat = 11.725833333333334

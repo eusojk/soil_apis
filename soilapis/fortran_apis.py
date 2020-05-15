@@ -64,7 +64,7 @@ def soil_type_api(fracs):
     return soil_type
 
 
-def which_api(sample_path, script_dir, api_num, fracs=None):
+def which_api(sample_path, script_dir, api_num, fracs=None, output_path=None):
     """
     Pick which api to use
     :param sample_path: sample file
@@ -82,7 +82,12 @@ def which_api(sample_path, script_dir, api_num, fracs=None):
 
     arg_sample = Path(sample_path)
     path_to_exec = os.path.abspath(script_dir)
-    output_dir = path_to_exec + '/outputs/'
+
+    if output_path is None:
+        output_dir = path_to_exec + '/outputs/'
+    else:
+        output_dir = output_path + '/'
+
     path_to_exec += '/soilapis/'
 
     if api_num == 0:  # TAW

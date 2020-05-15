@@ -24,6 +24,7 @@ cla_dir = ""
 org_dir = ""
 san_dir = ""
 dir_types = ""
+output_path = ""
 gdal.UseExceptions()  # Enable errors
 
 
@@ -166,8 +167,11 @@ class CountrySoilProperty(object):
             return mean
 
 
-def set_soil_layers_dir(soil_layers_path, country_iso):
-    global bds_dir, cla_dir, org_dir, san_dir, dir_types
+def set_soil_layers_dir(soil_layers_path, output_loc, country_iso):
+    global bds_dir, cla_dir, org_dir, san_dir, dir_types, output_path
+
+    # the ouptput dir given
+    output_path = output_loc
 
     dir_types = []
     layers_types = ['bulkdensity', 'clay', 'organicsoil', 'sandfraction']
@@ -177,7 +181,7 @@ def set_soil_layers_dir(soil_layers_path, country_iso):
         if Path(path_obj).exists():
             path_obj += '/*.tif'
             dir_types.append(path_obj)
-
+    # print('output_path is', Path(output_path))
 
 def get_soil_layers_dir():
     global dir_types
@@ -480,7 +484,7 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
         ascfile = out_dssat + '/sample_asc.csv'
         df_to_asc(df_summary.iloc[:, 0:8], ascfile)
         out_path_asc = os.path.abspath(ascfile)
-        out_path = which_api(out_path_asc, script_dir, 1)
+        out_path = which_api(out_path_asc, script_dir, 1, None, output_path)
 
         # TO-DO: convert TH.SOL into JSON. Ask Jab's advice
         if json_out:
@@ -503,7 +507,7 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
 
         # call the fortran_api
         out_path_asc = os.path.abspath(outname)
-        soil_type = which_api(out_path_asc, script_dir, 0, fracs)
+        soil_type = which_api(out_path_asc, script_dir, 0, fracs, output_path)
 
         taw_dict = {"Code": 1, "Soil": soil_type, 'Total_Available_Water(mm)': taw_val}
 
