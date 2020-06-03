@@ -9,17 +9,18 @@ def get_all_tif_files():
 
 
 class SoilConnector:
-    def __init__(self, soil_layers_path, country='Thailand'):
+    def __init__(self, soil_layers_path, output_path=None, country='Thailand'):
         """
         Constructor
         :param soil_layers_path: main directory containing the soil properties (bulk density, organic carbon, clay, sand
         :param country: the name of the country of interest. This is set to Thailand by default
         """
         self.layers = soil_layers_path
+        self.output_loc = output_path
         self.country_iso = ecb.get_country_iso(country)
         self.test_pass = self.run_tests()
         if self.test_pass:
-            ssp.set_soil_layers_dir(self.layers, self.country_iso)
+            ssp.set_soil_layers_dir(self.layers, self.output_loc, self.country_iso)
 
     def get_total_available_water(self, lon, lat, depth, win):
         """
@@ -69,6 +70,11 @@ class SoilConnector:
         if not Path(self.layers).exists():
             print("Given directory doesn't exit:", self.layers)
             return
+        if self.output_loc is not None:
+            if not Path(self.output_loc).exists():
+                print("Given output directory doesn't exit:", self.output_loc)
+                return
+
         self.test_pass = True
 
         return self.test_pass

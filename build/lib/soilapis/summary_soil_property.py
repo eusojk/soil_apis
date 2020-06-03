@@ -24,6 +24,7 @@ cla_dir = ""
 org_dir = ""
 san_dir = ""
 dir_types = ""
+output_path = ""
 gdal.UseExceptions()  # Enable errors
 
 
@@ -166,8 +167,11 @@ class CountrySoilProperty(object):
             return mean
 
 
-def set_soil_layers_dir(soil_layers_path, country_iso):
-    global bds_dir, cla_dir, org_dir, san_dir, dir_types
+def set_soil_layers_dir(soil_layers_path, output_loc, country_iso):
+    global bds_dir, cla_dir, org_dir, san_dir, dir_types, output_path
+
+    # the ouptput dir given
+    output_path = output_loc
 
     dir_types = []
     layers_types = ['bulkdensity', 'clay', 'organicsoil', 'sandfraction']
@@ -177,7 +181,7 @@ def set_soil_layers_dir(soil_layers_path, country_iso):
         if Path(path_obj).exists():
             path_obj += '/*.tif'
             dir_types.append(path_obj)
-
+    # print('output_path is', Path(output_path))
 
 def get_soil_layers_dir():
     global dir_types
@@ -403,6 +407,45 @@ def compute_taw_row(row):
     fraction = row['fraction']
     return compute_taw(fc, pwp, depth, fraction)
 
+def get_frac_for_taw(depth):
+    """
+
+    :param depth: numerical depth values
+    :return: a float value or fraction
+    """
+def get_frac_for_taw(depth):
+    """
+
+    :param depth: numerical depth values
+    :return: a float value or fraction
+    """
+    depths_available = [10, 90, 200, 300, 400, 1000]
+    cumulative_depths = [10, 100, 300, 600, 1000, 2000]
+    
+    # when numerator < denominator (default)
+    is_num_less = True
+
+    if depth not in cumulative_depths:
+        depths_dif = [abs(x - depth) for x in cumulative_depths]
+        min_depth_diff = min(depths_dif)
+        index_closest = depths_dif.index(min_depth_diff)
+
+        sum_to_depth_closest = sum( depths_available[:index_closest] )
+
+        num  = abs(depth - sum_to_depth_closest)
+        denom  = depths_available[index_closest]
+        
+        if num > denom:
+            numerator  = (num - depths_available[index_closest]) 
+            denominator = depths_available[index_closest + 1]
+            is_num_less = False
+
+        else:
+            numerator  = num
+            denominator = denom
+
+        frac = numerator / denominator 
+        return [frac, index_closest, is_num_less]
 
 def setup(lon, lat, window, format_arg, depth=0, json_out=False):
     """
@@ -438,32 +481,48 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
     outname = 'SoilTAW' + str(depth) + 'mm.csv'
 
     depth_values = [10, 90, 200, 300, 400, 1000]
+    cumulative_depths = [10, 100, 300, 600, 1000, 2000]
     frac_values = []
     actual_frac = 1
+    is_num_less = True
 
     # Estimating closest depth value if depth given is part of depth values available
-    if depth not in depth_values:
-        depth_possible = [abs(x - depth) for x in depth_values]
-        min_diff = min(depth_possible)
-        index_closest = depth_possible.index(min_diff)
-        depth_closest = depth_values[index_closest]
-        depth_diff = abs(depth - depth_closest)
-        actual_frac = depth_diff / depth_values[index_closest]
+    if depth not in cumulative_depths:
+        # depth_possible = [abs(x - depth) for x in depth_values]
+        # min_diff = min(depth_possible)
+        # index_closest = depth_possible.index(min_diff)
+        # depth_closest = depth_values[index_closest]
+        # depth_diff = abs(depth - depth_closest)
+        # actual_frac = depth_diff / depth_values[index_closest]
+        res = get_frac_for_taw(depth)
+        actual_frac = res[0]
+        index_closest = res[1]
+        is_num_less = res[2]
 
     else:  # depth given is available
         # depth = depth_values[0]
         # layer_oi = str(depth) + 'mm'
-        index_closest = depth_values.index(depth)
+        index_closest = cumulative_depths.index(depth)
 
     # compute the fractions needed for computing TAW
-    for i in range(len(depth_values)):
-        if i < index_closest:
-            frac = 1
-        elif i == index_closest:
-            frac = round(actual_frac, 2)
-        else:
-            frac = 0
-        frac_values.append(frac)
+    if is_num_less:
+        for i in range(len(depth_values)):
+            if i < index_closest:
+                frac = 1
+            elif i == index_closest:
+                frac = round(actual_frac, 2)
+            else:
+                frac = 0
+            frac_values.append(frac)
+    else:
+        for i in range(len(depth_values)):
+            if i <= index_closest:
+                frac = 1
+            elif i == index_closest+1:
+                frac = round(actual_frac, 2)
+            else:
+                frac = 0
+            frac_values.append(frac)
 
     # make a dataframe
     df_summary = dict_to_df(dict_summary)
@@ -480,7 +539,7 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
         ascfile = out_dssat + '/sample_asc.csv'
         df_to_asc(df_summary.iloc[:, 0:8], ascfile)
         out_path_asc = os.path.abspath(ascfile)
-        out_path = which_api(out_path_asc, script_dir, 1)
+        out_path = which_api(out_path_asc, script_dir, 1, None, output_path)
 
         # TO-DO: convert TH.SOL into JSON. Ask Jab's advice
         if json_out:
@@ -493,7 +552,9 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
         df_summary['PWP'] = df_summary.apply(compute_pwp_row, axis=1)
         df_summary['fraction'] = frac_values
         df_summary['TAW'] = df_summary.apply(lambda x: compute_taw_row(x), axis=1)
-
+        # print()
+        # print(df_summary.to_dict())
+        # print()
         # taw_val = df_summary.loc[layer_oi, 'TAW']
         taw_val = df_summary['TAW'].sum()
         taw_val = round(taw_val, 2)
@@ -503,7 +564,7 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
 
         # call the fortran_api
         out_path_asc = os.path.abspath(outname)
-        soil_type = which_api(out_path_asc, script_dir, 0, fracs)
+        soil_type = which_api(out_path_asc, script_dir, 0, fracs, output_path)
 
         taw_dict = {"Code": 1, "Soil": soil_type, 'Total_Available_Water(mm)': taw_val}
 
@@ -516,7 +577,8 @@ def setup(lon, lat, window, format_arg, depth=0, json_out=False):
         # export df as a txt/csv file
         df_to_asc(taw_data, outname)
         out_path = os.path.abspath(outname)
-
+    
+    
     return out_path
 
 
