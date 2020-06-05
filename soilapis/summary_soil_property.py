@@ -125,12 +125,15 @@ class CountrySoilProperty(object):
                 window_size = 3
 
         step = (window_size - 1) // 2
-        row_start = px_x - step
-        row_stop = px_x + step + 1
-        col_start = px_y - step
-        col_stop = px_y + step + 1
+        col_start = px_x - step
+        col_stop = px_x + step + 1
+        row_start = px_y - step
+        row_stop = px_y + step + 1
         data = self.get_band_array()
         res = data[row_start:row_stop, col_start:col_stop]
+        # res = data[col_start:col_stop, row_start:row_stop ]
+        # print(res)
+        # print('====')
         # if res.shape[0] * res.shape[1] != window_size * window_size:
         #     return
         return res
@@ -275,7 +278,8 @@ def average_per_type(dir_path, lon, lat, window_size):
     for path in dir_path:
         key = path.split('/')[-3]
         list_avg = average_per_layer(path, lon, lat, window_size)
-
+        # print(key, list_avg)
+        # print()
         if list_avg == -99:
             return -99
         elif list_avg == -89:
